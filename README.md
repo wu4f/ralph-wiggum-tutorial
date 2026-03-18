@@ -158,6 +158,7 @@ Watch the loop. When you see failures:
 - **Architecture**: React Islands (server-rendered HTML + selective React hydration)
 
 ## Tutorial commands
+```bash
 * copilot [to enter copilot]
 * /model [to pick the model]
 * /agent [pick the plan agent]
@@ -169,6 +170,7 @@ Watch the loop. When you see failures:
 * exit [exit copilot]
 * ./loop.sh -m plan -n 2 [to implement the plan]
 * ./loop.sh -m build
+```
 
 ## License
 
