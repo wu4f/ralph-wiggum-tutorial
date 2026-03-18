@@ -157,6 +157,19 @@ Watch the loop. When you see failures:
 - **Testing**: pytest, Vitest, Playwright
 - **Architecture**: React Islands (server-rendered HTML + selective React hydration)
 
+## Tutorial commands
+* copilot [to enter copilot]
+* /model [to pick the model]
+* /agent [pick the plan agent]
+* Write natural language text for the feature you would like to add
+* /agent [pick the review agent] 
+* /clear to give a fresh context
+* /model [pick a different model]
+* review specs/issue-pokemon-escape-room.md [change the name to the specific file created at the previous steps]
+* exit [exit copilot]
+* ./loop.sh -m plan -n 2 [to implement the plan]
+* ./loop.sh -m build
+
 ## License
 
 Educational tutorial application.
