@@ -1,0 +1,3 @@
+#!/bin/bash
+# Start the presentation server
+cd "$(dirname "$0")/../presentation" && npx serve .
