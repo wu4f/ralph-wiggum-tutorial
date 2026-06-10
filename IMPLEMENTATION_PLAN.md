@@ -6,6 +6,30 @@
 
 Spec: `specs/codebase-execution-flow-explorer.md` (comprehensive, self-contained).
 
+## Recently completed
+- **Removed orphaned Space Invaders dead code.** Deleted `frontend/src/game/*`
+  (already gone from the working tree, now staged) and `frontend/src/islands/game/`
+  (`GameIsland.tsx`, `index.tsx`). These were fully unwired (absent from the
+  `main.ts` island registry, templates, blueprints, and Vite manifest) but
+  `GameIsland.tsx` still imported `@/game/SpaceInvaders`, which no longer existed
+  — so `tsc` actually *failed* the typecheck (`TS2307`) before this cleanup.
+  Removing them satisfies the spec ("replaces the previous Space Invaders demo
+  entirely") and turns the build green. No remaining gaps: no
+  TODO/FIXME/placeholder markers and no skipped/xfail tests anywhere.
+
+## Verification (latest pass)
+- `PYTHONPATH=src pytest tests/` → 10 passed.
+- `cd frontend && npm test` (vitest) → 2 passed.
+- `mypy src/ --ignore-missing-imports` → clean (14 files).
+- `flake8 src/ tests/` → clean.
+- `cd frontend && npm run typecheck` (tsc) → clean. `npm run lint` → clean.
+- `npx playwright test --reporter=list` → 3 passed.
+- Spot-checked analyzer: request-flow + import-chain fallback functions present
+  (`_build_request_flows`, `_build_execution_flows`, `_chain_from`,
+  `_too_similar` Jaccard dedup, last-resort longest-chain), scoring is positional
+  with tiered feedback, snapshot store is in-memory with TTL eviction, learner
+  payload omits ordering (steps sorted by path; undirected graph).
+
 The app no longer ships the Space Invaders game. It is now an **Execution-Flow
 Explorer**: a student supplies a public GitHub repository URL, the backend
 downloads and analyzes the repo, builds an execution-flow map, and quizzes the
