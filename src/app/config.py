@@ -15,6 +15,25 @@ class Config:
 
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-me')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    LEARNING_ANALYSIS_TTL_SECONDS = int(
+        os.environ.get('LEARNING_ANALYSIS_TTL_SECONDS', '1800')
+    )
+    LEARNING_MAX_ARCHIVE_BYTES = int(
+        os.environ.get('LEARNING_MAX_ARCHIVE_BYTES', str(40 * 1024 * 1024))
+    )
+    LEARNING_MAX_EXTRACTED_BYTES = int(
+        os.environ.get('LEARNING_MAX_EXTRACTED_BYTES', str(120 * 1024 * 1024))
+    )
+    LEARNING_MAX_ANALYZED_FILES = int(
+        os.environ.get('LEARNING_MAX_ANALYZED_FILES', '4000')
+    )
+    LEARNING_MAX_FILE_BYTES = int(
+        os.environ.get('LEARNING_MAX_FILE_BYTES', str(512 * 1024))
+    )
+    LEARNING_ALLOW_FIXTURE_REPOS = (
+        os.environ.get('LEARNING_ALLOW_FIXTURE_REPOS', '').lower()
+        in ('1', 'true', 'yes')
+    )
 
     # Vite dev server URL for template asset loading
     VITE_DEV_SERVER = os.environ.get('VITE_DEV_SERVER', 'http://localhost:5173')
@@ -40,6 +59,7 @@ class TestingConfig(Config):
     # Use SQLite in-memory for fast tests
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
     VITE_DEV_MODE = False
+    LEARNING_ALLOW_FIXTURE_REPOS = True
     # Disable CSRF for testing
     WTF_CSRF_ENABLED = False
 

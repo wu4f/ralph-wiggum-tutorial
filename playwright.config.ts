@@ -27,5 +27,10 @@ export default defineConfig({
     url: 'http://localhost:5000',
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
+    env: {
+      ...process.env,
+      // Allow the built-in fixture repository so E2E runs without live GitHub.
+      LEARNING_ALLOW_FIXTURE_REPOS: 'true',
+    },
   },
 });

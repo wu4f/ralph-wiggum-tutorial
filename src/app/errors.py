@@ -38,7 +38,7 @@ def register_error_handlers(app: Flask) -> None:
         """Handle 404 Not Found errors."""
         logger.warning(f"Not found: {request.path}")
         if wants_json_response():
-            return jsonify(error="Not Found", message="The requested resource was not found"), 404
+            return jsonify(error="Not Found", message=str(error.description)), 404
         return render_template('errors/404.html', error=error), 404
 
     @app.errorhandler(500)

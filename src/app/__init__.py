@@ -4,6 +4,7 @@ from flask import Flask
 from .config import config
 from .models.base import db
 from .logging_config import configure_logging
+from .services.analysis_store import AnalysisStore
 
 
 def create_app(config_name: str | None = None) -> Flask:
@@ -30,6 +31,9 @@ def create_app(config_name: str | None = None) -> Flask:
 
     # Initialize extensions
     db.init_app(app)
+    app.extensions['analysis_store'] = AnalysisStore(
+        app.config['LEARNING_ANALYSIS_TTL_SECONDS']
+    )
 
     # Initialize Flask-Migrate
     from flask_migrate import Migrate

@@ -1,0 +1,3 @@
+[project]
+name = "buggy-portal"
+dependencies = ["Flask"]

@@ -1,0 +1,9 @@
+{
+  "name": "buggy-portal-frontend",
+  "dependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "vitest": "^1.2.0"
+  }
+}

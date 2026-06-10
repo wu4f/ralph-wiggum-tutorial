@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Execution Flow Explorer{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-slate-950 text-slate-50">
+    <div class="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-10 md:px-8">
+        <section class="space-y-4">
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+                Execution Flow Explorer
+            </p>
+            <h1 class="max-w-3xl text-4xl font-bold tracking-tight text-white md:text-5xl">
+                Visualize a codebase and prove you can trace its execution.
+            </h1>
+            <p class="max-w-3xl text-lg text-slate-300">
+                Paste a public GitHub repository URL. The app maps the code, then
+                quizzes you to click the files in the order they run for each
+                execution flow it discovers.
+            </p>
+        </section>
+
+        <div
+            data-island="learning"
+            class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl shadow-cyan-950/20"
+        >
+            <noscript>
+                <p class="text-slate-300">
+                    JavaScript is required to explore execution flows.
+                </p>
+            </noscript>
+        </div>
+    </div>
+</main>
+{% endblock %}

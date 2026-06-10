@@ -12,6 +12,6 @@ def register_blueprints(app: Flask) -> None:
     Args:
         app: Flask application instance
     """
-    from .game import game_bp
+    from .learning import learning_bp
 
-    app.register_blueprint(game_bp)
+    app.register_blueprint(learning_bp)
