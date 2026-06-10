@@ -5,9 +5,9 @@
 script/bootstrap  # Installs Python and Node dependencies
 ```
 
-**Setup** (first time and after migrations):
+**Setup** (first time only):
 ```bash
-script/setup  # Creates .env, database, runs migrations
+script/setup  # Creates .env, installs pre-commit hooks
 ```
 
 **Server** (development):
@@ -40,7 +40,7 @@ IMPORTANT ALWAYS RUN these after implementing to get immediate feedback:
 
 - **Backend**: Flask on :5000, `PYTHONPATH=src` required when running pytest directly
 - **Frontend**: Vite dev server on :5173, React Islands pattern with `data-island` attributes in templates
-- **Database**: PostgreSQL, connection via `DATABASE_URL` env var (set by `script/setup`)
+- **Stateless**: no database. Content comes from a Google Doc (service-account auth) and chat from Gemini; configure `GOOGLE_DOC_ID`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `GEMINI_API_KEY` in `.env`.
 - **Dev environment**: `.env` created by `script/setup`, contains all runtime config
 
 ### Codebase Patterns
@@ -48,8 +48,9 @@ IMPORTANT ALWAYS RUN these after implementing to get immediate feedback:
 - Backend: Python/Flask in `src/`, tests in `tests/`
 - Frontend: React in `frontend/`, compiled to static assets
 - Templates: Jinja2 with Islands hydration points (`data-island` attributes)
-- Migrations: Alembic in `migrations/`, auto-applied by `script/setup`
-- E2E tests: Playwright in `e2e/`, config in `playwright.config.ts`
+- E2E tests: Playwright in `e2e/`, config in `playwright.config.ts`. The chat E2E
+  tests need `GOOGLE_DOC_ID`, `GOOGLE_SERVICE_ACCOUNT_JSON`, `GEMINI_API_KEY` in the
+  environment (passed through `playwright.config.ts` `webServer.env`).
 
 ### Browser Testing
 

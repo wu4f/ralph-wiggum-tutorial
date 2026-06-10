@@ -1,41 +1,32 @@
 """Pytest configuration and fixtures.
 
-Provides test fixtures for the Flask application including:
-- Test app with testing configuration
-- Test client for making HTTP requests
-- Database setup/teardown per test
+Provides test fixtures for the Flask application. The app is stateless
+(no database); external services (Google Docs, Gemini) are mocked per test.
 """
+from collections.abc import Iterator
+
 import pytest
+from flask import Flask
+from flask.testing import FlaskClient, FlaskCliRunner
+
 from app import create_app
-from app.models import db
 
 
 @pytest.fixture
-def app():
-    """Create application configured for testing.
-
-    Uses SQLite in-memory database for fast, isolated tests.
-    Yields the app within application context.
-    """
-    app = create_app('testing')
-
-    with app.app_context():
-        db.create_all()
-        yield app
-        db.session.remove()
-        db.drop_all()
+def app() -> Iterator[Flask]:
+    """Create application configured for testing."""
+    flask_app = create_app('testing')
+    with flask_app.app_context():
+        yield flask_app
 
 
 @pytest.fixture
-def client(app):
-    """Create test client for making HTTP requests.
-
-    Use this fixture to test routes without running a server.
-    """
+def client(app: Flask) -> FlaskClient:
+    """Create test client for making HTTP requests."""
     return app.test_client()
 
 
 @pytest.fixture
-def runner(app):
+def runner(app: Flask) -> FlaskCliRunner:
     """Create CLI runner for testing Flask commands."""
     return app.test_cli_runner()

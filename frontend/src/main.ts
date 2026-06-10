@@ -25,7 +25,8 @@ interface IslandModule {
  * Add new islands here as they are created.
  */
 const islandRegistry: Record<string, () => Promise<IslandModule>> = {
-  learning: () => import('./islands/learning'),
+  'chat-widget': () => import('./islands/chat-widget'),
+  'chat-page': () => import('./islands/chat-page'),
 }
 
 /**

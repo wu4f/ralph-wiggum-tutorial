@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Ralph Wiggum Tutorial{% endblock %}</title>
+    <title>{% block title %}Docs Site{% endblock %}</title>
 
     {% block head %}{% endblock %}
 
@@ -21,13 +21,27 @@
         <script type="module" src="{{ config.VITE_DEV_SERVER }}/src/main.ts"></script>
     {% else %}
         {# Production: Load from built assets using manifest #}
-        {# The manifest.json maps source files to hashed output files #}
         <link rel="stylesheet" href="{{ url_for('static', filename='assets/main.css') }}">
         <script type="module" src="{{ url_for('static', filename='assets/main.js') }}"></script>
     {% endif %}
 </head>
 <body class="min-h-screen bg-gray-50">
+    <nav class="bg-white border-b px-4 py-3 flex gap-4 items-center">
+        {% for tab in tabs %}
+            <a href="/{{ tab.slug }}" class="text-sm font-medium hover:underline">
+                {{ tab.title }}
+            </a>
+        {% endfor %}
+        <a href="/chat" class="ml-auto text-sm font-medium text-indigo-600 hover:underline">
+            💬 Chat
+        </a>
+    </nav>
+
     {% block content %}{% endblock %}
+
+    {% if not hide_widget %}
+    <div data-island="chat-widget"></div>
+    {% endif %}
 
     {% block scripts %}{% endblock %}
 </body>

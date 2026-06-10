@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}{{ tab.title }}{% endblock %}
+{% block content %}
+<main class="max-w-4xl mx-auto px-4 py-10 prose prose-slate">
+  <h1>{{ tab.title }}</h1>
+  {{ content_html | safe }}
+</main>
+{% endblock %}

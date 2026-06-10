@@ -29,8 +29,12 @@ export default defineConfig({
     timeout: 30_000,
     env: {
       ...process.env,
-      // Allow the built-in fixture repository so E2E runs without live GitHub.
-      LEARNING_ALLOW_FIXTURE_REPOS: 'true',
+      // The chat/page E2E tests need a readable Google Doc + Gemini key.
+      // Provide these via the shell environment; the first three tests pass
+      // with Docs access alone, the fourth additionally needs a live Gemini key.
+      GOOGLE_DOC_ID: process.env.GOOGLE_DOC_ID ?? '',
+      GOOGLE_SERVICE_ACCOUNT_JSON: process.env.GOOGLE_SERVICE_ACCOUNT_JSON ?? '',
+      GEMINI_API_KEY: process.env.GEMINI_API_KEY ?? '',
     },
   },
 });

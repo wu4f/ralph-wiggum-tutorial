@@ -18,6 +18,18 @@ strict = true
 ignore_missing_imports = true
 exclude = ["venv", ".venv", "migrations"]
 
+# Test code is held to looser typing than the application: pytest and the
+# external SDK stubs are not always present in the type-checker's environment
+# (e.g. the pre-commit mypy venv), so strict decorator/generic checks would be
+# environment-dependent. Application code (src/) stays fully strict.
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_decorators = false
+disallow_any_generics = false
+warn_return_any = false
+
 [tool.flake8]
 max-line-length = 120
 exclude = [".venv", "venv", "migrations", "__pycache__", ".git"]

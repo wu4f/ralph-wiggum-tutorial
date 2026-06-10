@@ -4,9 +4,9 @@
 # This script handles all first-time setup:
 # - Installs dependencies (via bootstrap)
 # - Creates .env from template
-# - Sets up database
-# - Runs migrations
 # - Installs pre-commit hooks
+#
+# The app is stateless (Google Docs + Gemini); there is no database to set up.
 
 set -e
 
@@ -19,16 +19,8 @@ script/bootstrap
 if [ ! -f .env ]; then
     echo "==> Creating .env from template..."
     cp .env.example .env
+    echo "    Edit .env to set GOOGLE_DOC_ID, GOOGLE_SERVICE_ACCOUNT_JSON, GEMINI_API_KEY."
 fi
-
-# Create database if it doesn't exist (PostgreSQL)
-echo "==> Setting up database..."
-createdb app 2>/dev/null || echo "Database 'app' already exists or not using local PostgreSQL"
-
-# Run database migrations
-echo "==> Running database migrations..."
-export FLASK_APP=src/app:create_app
-flask db upgrade 2>/dev/null || echo "No migrations to apply yet"
 
 # Install pre-commit hooks
 echo "==> Installing pre-commit hooks..."

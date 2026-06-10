@@ -14,26 +14,24 @@ class Config:
     """Base configuration with shared settings."""
 
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-me')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    LEARNING_ANALYSIS_TTL_SECONDS = int(
-        os.environ.get('LEARNING_ANALYSIS_TTL_SECONDS', '1800')
-    )
-    LEARNING_MAX_ARCHIVE_BYTES = int(
-        os.environ.get('LEARNING_MAX_ARCHIVE_BYTES', str(40 * 1024 * 1024))
-    )
-    LEARNING_MAX_EXTRACTED_BYTES = int(
-        os.environ.get('LEARNING_MAX_EXTRACTED_BYTES', str(120 * 1024 * 1024))
-    )
-    LEARNING_MAX_ANALYZED_FILES = int(
-        os.environ.get('LEARNING_MAX_ANALYZED_FILES', '4000')
-    )
-    LEARNING_MAX_FILE_BYTES = int(
-        os.environ.get('LEARNING_MAX_FILE_BYTES', str(512 * 1024))
-    )
-    LEARNING_ALLOW_FIXTURE_REPOS = (
-        os.environ.get('LEARNING_ALLOW_FIXTURE_REPOS', '').lower()
-        in ('1', 'true', 'yes')
-    )
+
+    # Google Docs source document and service-account credential.
+    GOOGLE_DOC_ID = os.environ.get('GOOGLE_DOC_ID', '')
+    # Path to a service-account JSON key file, OR the raw JSON itself.
+    GOOGLE_SERVICE_ACCOUNT_JSON = os.environ.get('GOOGLE_SERVICE_ACCOUNT_JSON', '')
+
+    # Gemini API key for the chat service.
+    GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+
+    # How long parsed Google Doc content is cached before re-fetching.
+    DOCS_CACHE_TTL_SECONDS = int(os.environ.get('DOCS_CACHE_TTL_SECONDS', '900'))
+
+    # Absolute base URL for building page links in chat sources. Falls back to
+    # the request host when empty.
+    SITE_BASE_URL = os.environ.get('SITE_BASE_URL', '')
+
+    # Per-IP rate limit applied to the chat API.
+    CHAT_RATE_LIMIT = os.environ.get('CHAT_RATE_LIMIT', '20 per minute')
 
     # Vite dev server URL for template asset loading
     VITE_DEV_SERVER = os.environ.get('VITE_DEV_SERVER', 'http://localhost:5173')
@@ -43,23 +41,22 @@ class DevelopmentConfig(Config):
     """Development configuration with debug enabled."""
 
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL',
-        'postgresql://postgres:postgres@localhost:5432/app'
-    )
     # In development, load assets from Vite dev server
     VITE_DEV_MODE = True
 
 
 class TestingConfig(Config):
-    """Testing configuration with in-memory database."""
+    """Testing configuration; all external services are mocked."""
 
     TESTING = True
     DEBUG = True
-    # Use SQLite in-memory for fast tests
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
     VITE_DEV_MODE = False
-    LEARNING_ALLOW_FIXTURE_REPOS = True
+    GOOGLE_DOC_ID = 'test-doc-id'
+    GOOGLE_SERVICE_ACCOUNT_JSON = ''   # tests mock the service entirely
+    GEMINI_API_KEY = 'test-gemini-key'
+    DOCS_CACHE_TTL_SECONDS = 9999
+    SITE_BASE_URL = 'http://localhost'
+    CHAT_RATE_LIMIT = '1000 per minute'   # effectively disabled in tests
     # Disable CSRF for testing
     WTF_CSRF_ENABLED = False
 
@@ -68,7 +65,6 @@ class ProductionConfig(Config):
     """Production configuration with strict security settings."""
 
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     # In production, load assets from built manifest
     VITE_DEV_MODE = False
 
@@ -78,8 +74,6 @@ class ProductionConfig(Config):
         """Production-specific initialization."""
         if not os.environ.get('FLASK_SECRET_KEY'):
             raise ValueError("FLASK_SECRET_KEY must be set in production")
-        if not os.environ.get('DATABASE_URL'):
-            raise ValueError("DATABASE_URL must be set in production")
 
 
 # Configuration dictionary for easy access

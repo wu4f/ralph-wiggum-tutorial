@@ -1,3 +1,0 @@
-[project]
-name = "clean-portal"
-dependencies = ["Flask"]
