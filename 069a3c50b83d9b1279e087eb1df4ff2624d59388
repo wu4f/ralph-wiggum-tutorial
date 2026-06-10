@@ -1,0 +1,35 @@
+Why this change (Ralph loop log):
+
+Context discovered: IMPLEMENTATION_PLAN.md and specs/ both described a
+completed Space Invaders game (100% done), but the working tree held large
+uncommitted work pivoting the app to a "Codebase Execution-Flow Explorer".
+Session-store history (prior cloud sessions) confirmed the user explicitly
+asked to "reimplement this app and make it completely focus on the code
+repository visualization, quizzing the student to identify the flow of
+execution in a given github repo that they provide." So the docs were stale,
+not the code.
+
+Verification performed before committing:
+- pytest 10 passed, vitest 2 passed, Playwright 3 passed.
+- mypy/flake8/tsc/eslint clean; vite production build clean.
+- Live end-to-end check of analyze_repository against EXTERNAL repos
+  (pallets/click, psf/requests) returned 4 import-chain flows each. This
+  confirms the prior open bug ("only works with ralph-wiggum repo") is fixed:
+  the generic Python/JS-TS import-chain detection now runs as a fallback
+  alongside the Flask+Islands request-flow detection, so arbitrary repos work.
+
+Design rationale captured for future loops:
+- Answer keys live server-side in an in-memory TTL snapshot store; the learner
+  payload sorts steps by path so the correct execution order is never leaked
+  to the browser (anti-cheat). No DB persistence by design (privacy, snapshots
+  are short-lived).
+- Fixture repos under tests/fixtures/repositories exist so pytest/E2E run
+  deterministically offline; enabled via LEARNING_ALLOW_FIXTURE_REPOS (off in
+  dev/prod, on in TestingConfig and the Playwright webServer env).
+
+Tooling note: pre-commit mypy/flake8 were typechecking the fixture sample
+repos (intentionally simple/buggy sample code) and failing. Excluded
+tests/fixtures from those hooks; pytest already skips them via norecursedirs.
+
+Spec hygiene: removed specs/space-invaders-classic-gameplay.md and added
+specs/codebase-execution-flow-explorer.md (single source of truth).
