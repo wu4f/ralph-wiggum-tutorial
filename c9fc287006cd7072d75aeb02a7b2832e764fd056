@@ -1,0 +1,17 @@
+Cleanup increment: removed orphaned Space Invaders code.
+
+Discovery: baseline `npm run typecheck` FAILED (TS2307: cannot find module
+'@/game/SpaceInvaders') because frontend/src/game/* had been deleted from the
+working tree in a prior loop but frontend/src/islands/game/GameIsland.tsx
+still imported it. The IMPLEMENTATION_PLAN.md claim of "typecheck clean" was
+stale. Both dirs are now deleted and staged together.
+
+Safety check before deletion: grep across src/frontend/tests/e2e for
+islands/game, SpaceInvaders, GameIsland, data-island="game" found zero
+references outside the deleted directory itself, so removal is non-breaking.
+
+Post-change validation: pytest 10, vitest 2, mypy 14 files clean, flake8
+clean, tsc clean, eslint clean, playwright 3 passed, vite build clean.
+
+Note: `vite build` empties src/app/static (emptyOutDir) and drops .gitkeep;
+restored via `git checkout -- src/app/static/.gitkeep`.
