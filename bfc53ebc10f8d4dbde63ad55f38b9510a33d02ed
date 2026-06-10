@@ -1,0 +1,45 @@
+Increment: implemented specs/google-docs-site-with-chat.md, fully replacing the
+Codebase Execution-Flow Explorer (the prior IMPLEMENTATION_PLAN described that
+old feature as "done" — it was stale relative to this newer spec).
+
+WHY this scope: the new spec's Solution Statement §12 mandates removing all
+learning/execution-flow code AND stripping the unused database layer because
+the feature is stateless. Did that: deleted models/, migrations/, learning
+views/services/templates/islands/tests, the old spec, and all SQLAlchemy/
+Flask-Migrate/psycopg2 deps + LEARNING_*/SQLALCHEMY_* config + DB steps in
+conftest/script/setup.
+
+KEY DESIGN DECISIONS (the "why"):
+- Full-context over RAG: gemini-3.5-flash's 1M window holds an entire Google
+  Doc, so no embeddings/chunking. ContentCache builds one labelled context blob
+  (per-tab "## title / URL / body") once per TTL cycle.
+- Explicit Gemini cache with inline fallback: caches.create is only viable at
+  >= 4096 input tokens (documented minimum). Below that, or on create failure,
+  gemini_cache_name stays None and ChatService sends the context inline via
+  system_instruction. Tested both branches + the cache-delete-on-refresh path.
+- Structured output: response_schema=ChatAnswer (Pydantic) guarantees
+  {answer, sources[]} so source links are always present without string parsing.
+- Service-account auth (not API key): an API key cannot read link-shared docs.
+  _load_credentials accepts a file path OR inline JSON.
+
+ENVIRONMENT GOTCHA (important for future loops): the pre-commit mypy hook runs
+in its OWN venv with additional_dependencies=[types-Flask, sqlalchemy, pydantic,
+flask-sqlalchemy] — it has NO pytest or google/genai/limiter stubs. Under strict
+mypy that made every @pytest.fixture an "untyped decorator [misc]" error and
+FlaskClient a [type-arg] error, even though `mypy src/ --ignore-missing-imports`
+(the documented validation) was clean. Fix: a single-source pyproject
+[[tool.mypy.overrides]] for module "tests.*" relaxing decorator/generic/return
+strictness on test code only. src/ remains fully strict. Also: google-auth
+credential factories are untyped, so _load_credentials uses `credentials: Any =
+service_account.Credentials` (no env-specific # type: ignore that would be
+"unused" in the stub-less pre-commit env).
+
+VALIDATION: pytest 27 passed, vitest 1 passed, mypy src clean (13 files),
+flake8 clean, tsc clean, eslint clean, vite build clean (typography prose
+resolves). E2E (e2e/chat.spec.ts, 4 tests) NOT run here — needs live
+GOOGLE_DOC_ID + service account + GEMINI_API_KEY; webServer.env is wired to pass
+them through. This is the only unmet acceptance criterion (#12) and is purely an
+environment/credentials limitation, documented in IMPLEMENTATION_PLAN.md.
+
+vite build empties src/app/static and drops .gitkeep; restored via
+`git checkout -- src/app/static/.gitkeep`. Build artifacts are gitignored.
